@@ -11,10 +11,11 @@ We use the [[packages#pi-subagents|pi-subagents]] package only for **scout**, Pi
 
 ## How it works
 
-1. Pi loads `npm:pi-subagents` from `settings.json` and exposes `subagents_enable` then `subagent`.
-2. The primary agent delegates with `agent: "scout"`, `context: "fresh"`, and a scoped `task` mandate (paths, directories, or symbols plus one question).
-3. Scout uses read/search tools in a child session. The parent should use only the **`subagent` tool result** as scout output, not child tool traces.
-4. Edits and user-facing answers stay on the primary session.
+1. Pi loads `npm:pi-subagents` from `settings.json`. By default the package hides `subagent` behind `subagents_enable` until the next model turn.
+2. Our extension `extensions/subagent-eager.ts` keeps `subagent` on the active tool set every session (same effect as starting Pi with `--exclude-tools subagents_enable`). No CLI flag is required.
+3. The primary agent delegates with `agent: "scout"`, `context: "fresh"`, and a scoped `task` mandate (paths, directories, or symbols plus one question).
+4. Scout uses read/search tools in a child session. The parent should use only the **`subagent` tool result** as scout output, not child tool traces.
+5. Edits and user-facing answers stay on the primary session.
 
 Builtin scout ships with `write` and a default `context.md` output. Our `settings.json` overrides remove write, disable default output, pin model and thinking, and default fresh context.
 

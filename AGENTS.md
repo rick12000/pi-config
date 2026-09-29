@@ -6,7 +6,7 @@ Use web search sparingly. Search only when current information or external techn
 
 Delegate read-only codebase recon to the builtin `scout` subagent when you need initial ingestion, high-level structure, or grounded answers before you plan or implement. Use it before developing a plan, when the user asks how the code works, or when you expect many reads, searches, or exploratory shell commands.
 
-Call `subagents_enable` when delegation is appropriate, then `subagent` with `agent` set to `scout`, `context` set to `fresh`, and a single explicit mandate in `task`. Scope paths, directories, or symbols in that mandate. Treat the tool result text as the only scout output you may rely on. Do not replay child tool traces into your reasoning.
+When delegation is appropriate, call `subagent` with `agent` set to `scout`, `context` set to `fresh`, and a single explicit mandate in `task`. Scope paths, directories, or symbols in that mandate. Treat the tool result text as the only scout output you may rely on. Do not replay child tool traces into your reasoning. Do not call `subagents_enable` first; `subagent` is kept active by `extensions/subagent-eager.ts`.
 
 Each scout run must stay read-only. Do not ask scout to edit, write, or mutate the repo. Keep implementation, edits, and final user-facing synthesis on the primary session.
 

@@ -40,7 +40,7 @@ Delegates work to child Pi sessions: scout, researcher, worker, reviewer, oracle
 - Update: `pi update npm:pi-subagents`
 - Links: [Pi gallery](https://pi.dev/packages/pi-subagents) · [GitHub](https://github.com/nicobailon/pi-subagents)
 - Vulnerability: **high**. Child agents inherit tool access, including edits. This install depends on `acorn`, `jiti`, `typebox`, `undici`, and `yaml`. The repo is active (pushed 29 Sep 2026): about 3,800 stars, 760 forks, 5 open issues, about 166k weekly downloads.
-- Our scout-only overrides and primary-agent policy: [[subagents]].
+- Our scout-only overrides, eager `subagent` activation (`extensions/subagent-eager.ts`), and primary-agent policy: [[subagents]].
 
 ### @juicesharp/rpiv-todo
 
