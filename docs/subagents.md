@@ -31,11 +31,20 @@ Tracked in this repo under `settings.json`, key `subagents`:
       "thinking": false,
       "defaultContext": "fresh",
       "output": false,
-      "tools": "read, grep, find, ls, bash, contact_supervisor"
+      "tools": [
+        "read",
+        "grep",
+        "find",
+        "ls",
+        "bash",
+        "contact_supervisor"
+      ]
     }
   }
 }
 ```
+
+In `agentOverrides`, `tools` must be a **JSON array of strings**, `"inherit"`, or `false`. A single comma-separated string is invalid (unlike scout agent frontmatter in `.md` files).
 
 | Field | Effect |
 |-------|--------|
