@@ -26,7 +26,11 @@
 !/themes/
 !/themes/**
 
+!/docs/
+!/docs/**
+
 # Re-block unsafe/generated content inside approved directories
+**/.obsidian/
 **/.env
 **/.env.*
 **/*.key
