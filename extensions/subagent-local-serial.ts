@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -88,6 +88,65 @@ function isFanout(input: Record<string, unknown>): boolean {
   );
 }
 
+function providerName(model: unknown): string | undefined {
+  if (!model || typeof model !== "object") return undefined;
+  const provider = (model as { provider?: unknown }).provider;
+  return typeof provider === "string" && provider.length > 0 ? provider : undefined;
+}
+
+/**
+ * Session model is `ctx.model`. `getModel` is an internal runner callback, not part of
+ * ExtensionContext; calling it throws and Pi turns that into a failed tool result.
+ * Accept a function only when one is actually present, and never throw out of lookup.
+ */
+function parentProvider(ctx: ExtensionContext): string | undefined {
+  try {
+    const current = providerName(ctx.model);
+    if (current) return current;
+  } catch {
+    // A stale runner makes the model getter throw. Fall through.
+  }
+
+  const legacy = (ctx as { getModel?: unknown }).getModel;
+  if (typeof legacy !== "function") return undefined;
+  try {
+    return providerName(legacy.call(ctx));
+  } catch {
+    return undefined;
+  }
+}
+
+function needsExclusive(input: Record<string, unknown>, ctx: ExtensionContext): boolean {
+  const local = localProviders();
+  const parent = parentProvider(ctx);
+  const explicit = typeof input.model === "string" ? providerOfModelId(input.model) : undefined;
+  const agent = typeof input.agent === "string" ? input.agent : undefined;
+  const pinned = agent ? providerOfModelId(overrideModel(agent) ?? "") : undefined;
+  const child = explicit ?? pinned ?? parent;
+  return (
+    (parent !== undefined && local.has(parent)) ||
+    (child !== undefined && local.has(child))
+  );
+}
+
+const FANOUT_BLOCK = {
+  block: true,
+  reason:
+    "Local models allow one subagent at a time. Call subagent once with agent and task. Do not use workflowScript or parallel fanout.",
+} as const;
+
+const INFLIGHT_BLOCK = {
+  block: true,
+  reason: "A subagent is already running. Wait for its tool result before starting another.",
+} as const;
+
+function enforceSerial(input: Record<string, unknown>, toolCallId: string) {
+  if (isFanout(input)) return { ...FANOUT_BLOCK };
+  if (inflight.size > 0) return { ...INFLIGHT_BLOCK };
+  input.async = false;
+  inflight.add(toolCallId);
+}
+
 /**
  * Local inference cannot share the machine with a continuing parent or a second child.
  * If the session model or the child model is a loopback provider, force one foreground
@@ -96,38 +155,21 @@ function isFanout(input: Record<string, unknown>): boolean {
 export default function (pi: ExtensionAPI) {
   pi.on("tool_call", (event, ctx) => {
     if (event.toolName !== "subagent") return;
-    const input = event.input;
+    const raw = event.input;
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return;
+    const input = raw as Record<string, unknown>;
     if (!isChildLaunch(input)) return;
 
-    const local = localProviders();
-    const parentProvider = ctx.getModel()?.provider;
-    const explicit = typeof input.model === "string" ? providerOfModelId(input.model) : undefined;
-    const agent = typeof input.agent === "string" ? input.agent : undefined;
-    const pinned = agent ? providerOfModelId(overrideModel(agent) ?? "") : undefined;
-    const childProvider = explicit ?? pinned ?? parentProvider;
-    const exclusive =
-      (parentProvider !== undefined && local.has(parentProvider)) ||
-      (childProvider !== undefined && local.has(childProvider));
+    // Classification errors must not escape: Pi records a thrown tool_call hook as the
+    // tool result and never starts the child. Unknown locality stays serial.
+    let exclusive = true;
+    try {
+      exclusive = needsExclusive(input, ctx);
+    } catch {
+      exclusive = true;
+    }
     if (!exclusive) return;
-
-    if (isFanout(input)) {
-      return {
-        block: true,
-        reason:
-          "Local models allow one subagent at a time. Call subagent once with agent and task. Do not use workflowScript or parallel fanout.",
-      };
-    }
-
-    if (inflight.size > 0) {
-      return {
-        block: true,
-        reason:
-          "A subagent is already running. Wait for its tool result before starting another.",
-      };
-    }
-
-    input.async = false;
-    inflight.add(event.toolCallId);
+    return enforceSerial(input, event.toolCallId);
   });
 
   const release = (toolCallId: string, toolName: string) => {
