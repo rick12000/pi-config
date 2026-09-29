@@ -12,6 +12,14 @@ On a local model, launch one scout and wait for that tool result before any othe
 
 Each scout run must stay read-only. Do not ask scout to edit, write, or mutate the repo. Keep implementation, edits, and final user-facing synthesis on the primary session.
 
+# Command gate
+
+`extensions/command-gate.ts` checks `bash` and `powershell` before they run, including inside subagents. Allowed commands run. Banned commands are refused. Ask-list commands wait until the user presses Enter to allow or `n` to reject.
+
+If a tool result says the user rejected a command, that rejection is final. Do not run that command again, and do not retry it through another shell, a wrapper, different flags, or an encoded form. Continue without it. A ban-list block is also final.
+
+`web_search`, `source_check`, and `fetch_content` are outside this gate. Starting Pi with `--no-command-gate` turns the gate off for that process.
+
 # Todo lists
 
 Pi loads **`@juicesharp/rpiv-todo`** from `settings.json` (see `docs/packages.md`). It registers the **`todo`** tool, a live Todos panel above the editor, and **`/todos`** to print the list. Tasks replay from the session branch so they survive `/reload` and compaction. Optional package config lives at `~/.config/rpiv-todo/config.json`.

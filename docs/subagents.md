@@ -16,6 +16,7 @@ We use the [[packages#pi-subagents|pi-subagents]] package only for **scout**, Pi
 3. The primary agent delegates with `agent: "scout"`, `context` set to `fresh`, and a scoped `task` mandate (paths, directories, or symbols plus one question).
 4. Scout uses read/search tools in a child session. The parent should use only the **`subagent` tool result** as scout output, not child tool traces.
 5. Edits and user-facing answers stay on the primary session.
+6. `subagents.defaultSubagentOnlyExtensions` loads `extensions/command-gate.ts` into every child. Foreground children do not load other ambient extensions, so the gate has to be listed there. A child has no terminal of its own. An ask-list command waits, and the main session shows Enter to allow or `n` to reject. See [[command-gate]].
 
 ## Local models
 
@@ -30,6 +31,9 @@ Tracked in this repo under `settings.json`, key `subagents`:
 ```json
 "subagents": {
   "defaultSubagentContext": "fresh",
+  "defaultSubagentOnlyExtensions": [
+    "C:/Users/ricca/.pi/agent/extensions/command-gate.ts"
+  ],
   "agentOverrides": {
     "scout": {
       "model": "local-qwen/piccolo-average",
@@ -54,6 +58,7 @@ In `agentOverrides`, `tools` must be a **JSON array of strings**, `"inherit"`, o
 | Field | Effect |
 |-------|--------|
 | `defaultSubagentContext` | Fresh child session when a launch omits `context`. |
+| `defaultSubagentOnlyExtensions` | Loads the command gate into every child that does not set its own list. |
 | `scout.model` | Piccolo average for recon, not the parent Krillin model. |
 | `scout.thinking` | Reasoning off for scout. |
 | `scout.tools` | Read-only recon. No `write` or `edit`. |
@@ -65,4 +70,4 @@ Restart Pi or `/reload` after editing.
 
 Global instructions in `AGENTS.md` tell the primary agent when to delegate scout (pre-plan recon, codebase questions, heavy read/search work), to pass `context: "fresh"` and a single mandate in `task`, and to treat the tool result as the only scout handoff while keeping mutations on the primary session.
 
-Related: [[packages]] · [[git/setup|Git setup]]
+Related: [[packages]] · [[command-gate]] · [[git/setup|Git setup]]
