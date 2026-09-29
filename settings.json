@@ -1,0 +1,24 @@
+{
+  "lastChangelogVersion": "0.87.1",
+  "theme": "modern-night",
+  "defaultProvider": "local-qwen",
+  "defaultModel": "krillin-average",
+  "modelThinkingLevels": {
+    "local-qwen/krillin-average": "medium"
+  },
+  "packages": [
+    "npm:pi-rewind",
+    "npm:pi-subagents",
+    "npm:@juicesharp/rpiv-todo"
+  ],
+  "tuiMode": "fullscreen",
+  "editorPaddingX": 2,
+  "outputPad": 1,
+  "autocompleteMaxVisible": 5,
+  "quietStartup": true,
+  "terminal": {
+    "trueColor": "auto",
+    "hyperlinks": "auto",
+    "showImages": true
+  }
+}

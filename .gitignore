@@ -1,0 +1,47 @@
+# Ignore everything by default
+/*
+
+# Keep repository policy
+!/.gitignore
+
+# Explicitly approved root configuration
+!/settings.json
+!/keybindings.json
+!/AGENTS.md
+!/AGENTS.override.md
+!/CLAUDE.md
+!/SYSTEM.md
+!/APPEND_SYSTEM.md
+
+# Explicitly approved user-authored resources
+!/extensions/
+!/extensions/**
+
+!/skills/
+!/skills/**
+
+!/prompts/
+!/prompts/**
+
+!/themes/
+!/themes/**
+
+# Re-block unsafe/generated content inside approved directories
+**/.env
+**/.env.*
+**/*.key
+**/*.pem
+**/*.p12
+**/*.pfx
+
+**/node_modules/
+**/dist/
+**/build/
+**/coverage/
+**/.cache/
+**/tmp/
+**/logs/
+
+**/*.log
+**/*.tmp
+**/.DS_Store
