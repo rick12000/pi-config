@@ -8,6 +8,8 @@ Delegate read-only codebase recon to the builtin `scout` subagent when you need 
 
 When delegation is appropriate, call `subagent` with `agent` set to `scout`, `context` set to `fresh`, and a single explicit mandate in `task`. Scope paths, directories, or symbols in that mandate. Treat the tool result text as the only scout output you may rely on. Do not replay child tool traces into your reasoning. Do not call `subagents_enable` first; `subagent` is kept active by `extensions/subagent-eager.ts`.
 
+On a local model, launch one scout and wait for that tool result before any other work or a second scout. Do not pass `async: true` and do not fan out with `workflowScript`. `extensions/subagent-local-serial.ts` forces that call to stay in the foreground. A non-local parent and a non-local child model may run subagents in parallel.
+
 Each scout run must stay read-only. Do not ask scout to edit, write, or mutate the repo. Keep implementation, edits, and final user-facing synthesis on the primary session.
 
 # Todo lists
