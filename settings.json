@@ -6,6 +6,18 @@
   "modelThinkingLevels": {
     "local-qwen/krillin-average": "medium"
   },
+  "subagents": {
+    "defaultSubagentContext": "fresh",
+    "agentOverrides": {
+      "scout": {
+        "model": "local-qwen/piccolo-average",
+        "thinking": false,
+        "defaultContext": "fresh",
+        "output": false,
+        "tools": "read, grep, find, ls, bash, contact_supervisor"
+      }
+    }
+  },
   "packages": [
     "npm:pi-rewind",
     "npm:pi-subagents",
