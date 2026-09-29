@@ -54,6 +54,16 @@ function providerOfModelId(modelId: string): string | undefined {
   return trimmed.slice(0, slash);
 }
 
+function defaultSubagentModel(): string | undefined {
+  const settings = readJson(SETTINGS_FILE);
+  const subagents = settings?.subagents;
+  if (!subagents || typeof subagents !== "object" || Array.isArray(subagents)) {
+    return undefined;
+  }
+  const model = (subagents as JsonRecord).defaultModel;
+  return typeof model === "string" ? model : undefined;
+}
+
 function overrideModel(agent: string): string | undefined {
   const settings = readJson(SETTINGS_FILE);
   const subagents = settings?.subagents;
@@ -121,7 +131,9 @@ function needsExclusive(input: Record<string, unknown>, ctx: ExtensionContext): 
   const parent = parentProvider(ctx);
   const explicit = typeof input.model === "string" ? providerOfModelId(input.model) : undefined;
   const agent = typeof input.agent === "string" ? input.agent : undefined;
-  const pinned = agent ? providerOfModelId(overrideModel(agent) ?? "") : undefined;
+  const pinned = agent
+    ? providerOfModelId(overrideModel(agent) ?? defaultSubagentModel() ?? "")
+    : undefined;
   const child = explicit ?? pinned ?? parent;
   return (
     (parent !== undefined && local.has(parent)) ||

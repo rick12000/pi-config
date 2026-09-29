@@ -1,16 +1,18 @@
 ---
-name: prose-cuts
+name: slop-anti-patterns
 description: >-
-  Cut empty words and rhetorical packaging from prose. Use when the main
-  output is writing for the user. Do not use for reasoning, status updates,
-  or internal summaries.
+  Cut hollow words and rhetorical AI slop from prose. Apply when drafting or
+  revising explanations, documentation, technical writing, reports, notes,
+  user chat summaries, documentation edits, or any prose edit (not code).
+  Pair with general-style for structure. Do not use for reasoning, internal
+  summaries, or code.
 ---
 
-# Prose cuts
+# Slop anti-patterns
 
-Apply this skill only when the main task is writing and the main output returned to the user is prose.
+Apply when the deliverable includes prose for the user: answers, summaries, docs, reports, or edited copy. Use alongside `general-style` for structure and line of thought.
 
-Skip this skill for reasoning, status updates, stream of consciousness, and internal summaries.
+Do not apply to reasoning traces, status-only updates, internal summaries, or code (including comments treated as code edits).
 
 Keep the core content. Cut only the packaging below. Keep the facts, claims, names, numbers, and the writer's point.
 

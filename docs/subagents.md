@@ -7,7 +7,7 @@ tags:
 
 # Subagents
 
-We use the [[packages#pi-subagents|pi-subagents]] package only for **scout**, Pi’s builtin read-only codebase recon child. The primary session stays on `local-qwen/krillin-average`. Scout runs on a cheaper model with isolated context so exploration does not flood the parent transcript.
+We use the [[packages#pi-subagents|pi-subagents]] package only for **scout**, Pi’s builtin read-only codebase recon child. The primary session stays on `local-qwen/krillin-average`. Scout uses the default subagent model, `local-qwen/piccolo-large`, with thinking off and isolated context so exploration does not flood the parent transcript.
 
 ## Enabling `subagent`
 
@@ -33,7 +33,7 @@ pi --exclude-tools subagents_enable
 
 `extensions/subagent-local-serial.ts` treats a provider as local when its `baseUrl` in `models.json` is `127.0.0.1`, `localhost`, or `::1`. If the session model or the child model is local, one `subagent` call runs in the foreground (`async: false`) and a second launch or `workflowScript` fanout is blocked until that result returns. If both models are non-local, parallel async subagents stay allowed.
 
-Builtin scout ships with `write` and a default `context.md` output. Our `settings.json` overrides remove write, disable default output, pin model and thinking, and default fresh context.
+Builtin scout ships with `write` and a default `context.md` output. Our `settings.json` overrides remove write, disable default output, and default fresh context. `subagents.defaultModel` and `subagents.defaultThinking` apply to every role that does not set its own. Scout's builtin frontmatter sets `thinking: low`, so the scout override keeps thinking off.
 
 ## `settings.json`
 
@@ -41,13 +41,14 @@ Tracked in this repo under `settings.json`, key `subagents`:
 
 ```json
 "subagents": {
+  "defaultModel": "local-qwen/piccolo-large",
+  "defaultThinking": "off",
   "defaultSubagentContext": "fresh",
   "defaultSubagentOnlyExtensions": [
     "C:/Users/ricca/.pi/agent/extensions/command-gate.ts"
   ],
   "agentOverrides": {
     "scout": {
-      "model": "local-qwen/piccolo-average",
       "thinking": false,
       "defaultContext": "fresh",
       "output": false,
@@ -68,10 +69,11 @@ In `agentOverrides`, `tools` must be a **JSON array of strings**, `"inherit"`, o
 
 | Field | Effect |
 |-------|--------|
+| `defaultModel` | Piccolo large for every subagent that does not set its own model. |
+| `defaultThinking` | Reasoning off for every subagent that does not set thinking. |
 | `defaultSubagentContext` | Fresh child session when a launch omits `context`. |
 | `defaultSubagentOnlyExtensions` | Loads the command gate into every child that does not set its own list. |
-| `scout.model` | Piccolo average for recon, not the parent Krillin model. |
-| `scout.thinking` | Reasoning off for scout. |
+| `scout.thinking` | Builtin scout sets thinking to low. This override keeps it off. |
 | `scout.tools` | Read-only recon. No `write` or `edit`. |
 | `scout.output` | No default `context.md` handoff file. |
 

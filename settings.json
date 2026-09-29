@@ -2,18 +2,19 @@
   "lastChangelogVersion": "0.99.1",
   "theme": "modern-night",
   "defaultProvider": "local-qwen",
-  "defaultModel": "krillin-average",
+  "defaultModel": "piccolo-large",
   "modelThinkingLevels": {
     "local-qwen/krillin-average": "medium"
   },
   "subagents": {
+    "defaultModel": "local-qwen/piccolo-large",
+    "defaultThinking": "off",
     "defaultSubagentContext": "fresh",
     "defaultSubagentOnlyExtensions": [
       "C:/Users/ricca/.pi/agent/extensions/command-gate.ts"
     ],
     "agentOverrides": {
       "scout": {
-        "model": "local-qwen/piccolo-average",
         "thinking": false,
         "defaultContext": "fresh",
         "output": false,
