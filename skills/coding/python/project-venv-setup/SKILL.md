@@ -7,6 +7,8 @@ description: Create a Python virtual environment named .venv in the project root
 
 The environment is the directory `.venv` in the repository root. This is the single source of truth for the environment location; every command in this workflow and in the env instruction file (step 11) references it. Never create a differently named environment directory (for example `.venv-myproject` or `venv`) and never create the environment in the user profile.
 
+All paths in this skill and in the env instruction file are relative to the repository root, or expressed as variables (for example `<repo-root>`, `$env:USERPROFILE`). Never fill in machine-specific absolute paths.
+
 ## Workflow
 
 1. Before any other step, follow `publish-agent-instructions` for `name: env`. If an instruction with that name already exists, stop this workflow and follow that file. Do not create another environment.
@@ -40,7 +42,7 @@ The environment is the directory `.venv` in the repository root. This is the sin
    - When a retry succeeds, keep the resolution in the manifest files you changed.
    - Report those manifest changes in the final reply.
 
-9. Tell the user the environment is ready. Include the absolute directory and how to run commands, using exactly the two run modes from the env template in step 11.
+9. Tell the user the environment is ready. Include the environment directory as a relative path (`.venv` from the repository root) and how to run commands, using exactly the two run modes from the env template in step 11.
 
 10. Follow `publish-agent-instructions` with this environment's values filled into the body. These files are how the next session reuses the environment instead of repeating this workflow.
     - `name`: `env`
