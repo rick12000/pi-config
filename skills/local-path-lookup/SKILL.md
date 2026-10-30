@@ -10,6 +10,7 @@ Static lookup for this Windows machine. Do not re-search; use these paths direct
 | Entity | Path |
 |---|---|
 | Obsidian vault | `C:\Users\ricca\OneDrive\Documenti\Obsidian Vault` |
+| Obsidian AI Chats folder | `C:\Users\ricca\OneDrive\Documenti\Obsidian Vault\AI Chats` — Obsidian notes that don't quite belong in the main vault text: standalone summaries and tidbits from AI conversations (with the user, ChatGPT, etc.), kept as checkpoints not ready to be formalized. Put new chat-summary notes here. |
 | Pi installation | `C:\Users\ricca\.pi` |
 | Pi custom skills (source of truth) | `C:\Users\ricca\.pi\agent\skills` |
 | Global agent skills | `C:\Users\ricca\.agents\skills` |
